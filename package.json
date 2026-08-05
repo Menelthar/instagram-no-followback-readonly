@@ -2,12 +2,25 @@
   "name": "instagram-no-followback-readonly",
   "version": "1.0.0",
   "private": true,
-  "description": "Read-only Instagram no-follow-back scanner.",
+  "description": "Privacy-first, read-only Instagram scanner for finding accounts that do not follow you back.",
   "license": "MIT",
   "scripts": {
     "check": "node --check src/instagram-no-followback-readonly.js"
   },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Menelthar/instagram-no-followback-readonly.git"
+  },
+  "homepage": "https://menelthar.github.io/instagram-no-followback-readonly/",
+  "keywords": [
+    "instagram",
+    "followers",
+    "unfollowers",
+    "read-only",
+    "privacy",
+    "browser-script"
+  ]
 }
