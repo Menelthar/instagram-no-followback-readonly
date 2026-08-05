@@ -1,163 +1,117 @@
 # Instagram No-Follow-Back — Read Only
 
 [![Validate](https://github.com/Menelthar/instagram-no-followback-readonly/actions/workflows/validate.yml/badge.svg)](https://github.com/Menelthar/instagram-no-followback-readonly/actions/workflows/validate.yml)
-[![GitHub Pages](https://img.shields.io/badge/Open%20web%20app-GitHub%20Pages-2ea44f)](https://menelthar.github.io/instagram-no-followback-readonly/)
+[![Open web app](https://img.shields.io/badge/Open-GitHub%20Pages-2ea44f)](https://menelthar.github.io/instagram-no-followback-readonly/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 
-**Descubre qué cuentas sigues en Instagram y no te siguen de vuelta.**
+**Identifica las cuentas que sigues en Instagram y no te siguen de vuelta, sin entregar tu contraseña ni automatizar unfollows.**
 
-La herramienta se ejecuta directamente en tu navegador, dentro de Instagram Web. No solicita tu contraseña, no sube resultados a servidores externos y no deja de seguir a nadie automáticamente.
+La herramienta se ejecuta dentro de Instagram Web y mantiene los resultados en tu navegador. No solicita credenciales, no carga datos a servidores externos y no contiene acciones para modificar tu cuenta.
 
 <p align="center">
   <a href="https://menelthar.github.io/instagram-no-followback-readonly/"><strong>Abrir la página del proyecto</strong></a>
-  ·
-  <a href="docs/USAGE_ES.md">Guía en español</a>
-  ·
-  <a href="docs/USAGE_EN.md">English guide</a>
-  ·
-  <a href="docs/TROUBLESHOOTING_ES.md">Solucionar problemas</a>
+  · <a href="docs/USAGE_ES.md">Guía en español</a>
+  · <a href="docs/USAGE_EN.md">English guide</a>
+  · <a href="docs/TROUBLESHOOTING_ES.md">Solucionar problemas</a>
 </p>
 
 > [!IMPORTANT]
-> Este es un proyecto independiente y no oficial. Utiliza información que Instagram entrega a su propia versión web. Instagram puede cambiar esa respuesta, limitar las consultas o mostrar advertencias de actividad automatizada.
+> Es un proyecto independiente y no oficial. Utiliza un endpoint interno de Instagram Web, que puede cambiar o aplicar límites sin previo aviso. Comprueba manualmente una muestra de los resultados antes de tomar decisiones.
 
-## Para quién es
+## Qué mejora la versión 1.1.0
 
-Está pensado para personas que quieren revisar su lista de seguidos sin entregar su contraseña a aplicaciones de terceros y sin permitir que una herramienta haga cambios automáticos en su cuenta.
-
-No necesitas instalar Node.js, extensiones ni programas adicionales para usarlo. Solo necesitas un navegador de escritorio y una sesión iniciada en Instagram Web.
-
-## Qué hace
-
-- Revisa las cuentas que tú sigues.
-- Indica cuáles no te siguen de vuelta.
-- Separa seguimiento mutuo y resultados inciertos.
-- Permite buscar usuarios y abrir sus perfiles.
-- Exporta resultados a CSV o JSON.
-- Permite pausar, reanudar y detener el escaneo.
-- Detecta errores de sesión, bloqueos temporales y respuestas inesperadas.
-- Evita reintentos infinitos y ciclos por cursores repetidos.
-
-## Qué no hace
-
-- No solicita tu contraseña.
-- No envía cookies, tokens o resultados al autor.
-- No realiza `unfollow`.
-- No modifica tu cuenta.
-- No promete resultados perfectos.
-- No evita ni evade los límites de Instagram.
+- **Lector estricto:** prioriza rutas conocidas y rechaza respuestas ambiguas en lugar de elegir una lista parecida.
+- **Diagnóstico de integridad:** muestra esperados, recibidos, únicos, duplicados, inválidos e inciertos.
+- **Estados honestos:** distingue entre completado, completado con advertencias, incompleto y error.
+- **Timeout por solicitud:** cancela consultas que permanecen colgadas.
+- **Política HTTP explícita:** solo reintenta errores recuperables; se detiene ante sesión rechazada, límite o incompatibilidad.
+- **Cancelación inmediata:** las pausas y reintentos pueden interrumpirse con **Detener**.
+- **CSV protegido:** neutraliza valores que Excel podría interpretar como fórmulas.
+- **Exportaciones privadas por defecto:** no incluye IDs internos ni URLs de foto salvo que el usuario lo marque.
+- **Diagnóstico seguro:** copia información técnica sin nombres de usuario ni IDs personales.
+- **Interfaz bilingüe:** español e inglés.
+- **Accesibilidad:** navegación por teclado, control de foco y cierre con `Escape`.
+- **Pruebas automatizadas:** parser, relaciones, cursores, HTTP, integridad y CSV.
 
 ## Uso rápido
 
 1. Abre [Instagram Web](https://www.instagram.com/) e inicia sesión.
-2. Abre la [página pública del proyecto](https://menelthar.github.io/instagram-no-followback-readonly/).
-3. Pulsa **Copiar script**.
-4. Regresa a Instagram y abre la consola:
+2. Abre la [página del proyecto](https://menelthar.github.io/instagram-no-followback-readonly/).
+3. Revisa y copia el script.
+4. Abre la consola del navegador:
    - Windows/Linux: `Ctrl + Shift + J`
    - macOS: `⌘ + ⌥ + J`
-5. Pega el código completo y presiona `Enter`.
+5. Pega el script y presiona `Enter`.
 6. Pulsa **Iniciar escaneo**.
-7. Revisa manualmente una muestra de los resultados antes de dejar de seguir a alguien.
+7. Revisa el panel **Integridad** al terminar.
+8. Verifica manualmente varias cuentas antes de dejar de seguirlas.
 
-Consulta la [guía detallada en español](docs/USAGE_ES.md) antes de tu primera ejecución.
+## Cómo interpreta la relación
 
-## Cómo leer los resultados
-
-| Resultado | Significado |
+| Valor entregado por Instagram | Resultado |
 |---|---|
-| **No te sigue** | Instagram devolvió `follows_viewer === false`. |
-| **Mutuo** | Instagram devolvió `follows_viewer === true`. |
-| **Incierto** | Instagram no entregó un valor booleano confiable. No debe tratarse automáticamente como “no te sigue”. |
-| **Todos** | Todas las cuentas procesadas durante el escaneo actual. |
+| `follows_viewer === false` | No te sigue de vuelta |
+| `follows_viewer === true` | Seguimiento mutuo |
+| Campo ausente o no booleano | Incierto |
 
-La herramienta no compara archivos exportados. Consulta la relación disponible durante el escaneo de la sesión web.
+Los resultados inciertos nunca se mezclan con “No te siguen”.
+
+## Qué significa “Integridad: revisar”
+
+No significa automáticamente que toda la lista sea incorrecta. Indica que ocurrió al menos una de estas condiciones:
+
+- El contador inicial no coincide con los usuarios únicos.
+- Instagram repitió registros entre páginas.
+- Se descartó un registro sin ID o nombre de usuario.
+- Algún registro no incluyó una relación confiable.
+- El contador remoto cambió durante el escaneo.
+
+El botón **Copiar diagnóstico** genera un reporte técnico sin incluir usuarios ni IDs.
 
 ## Privacidad y seguridad
 
-Las solicitudes de lectura se hacen desde tu navegador hacia `www.instagram.com`. Los resultados permanecen en memoria mientras la interfaz está abierta y solo se escriben en tu equipo cuando eliges copiar o exportar.
+- El script solo realiza consultas `GET` a Instagram.
+- No solicita tu contraseña.
+- No copia cookies ni tokens fuera de la página.
+- No incluye trackers ni dependencias ejecutables remotas.
+- No ejecuta follow, unfollow, likes o mensajes.
+- Los IDs internos y fotos están excluidos de la exportación por defecto.
 
-El código está sin minimizar para que cualquier persona pueda revisarlo. El workflow de GitHub Actions comprueba que:
-
-- El JavaScript tenga sintaxis válida.
-- No exista una solicitud `POST` en el escáner.
-- No se cargue JavaScript ejecutable desde servicios remotos.
-
-Más información:
-
-- [Política de privacidad](docs/PRIVACY.md)
-- [Política de seguridad](SECURITY.md)
-- [Arquitectura técnica](docs/ARCHITECTURE.md)
-
-## Errores comunes
-
-- **No aparece la interfaz:** confirma que estás en `https://www.instagram.com/`.
-- **No se encuentra `ds_user_id`:** recarga Instagram e inicia sesión otra vez.
-- **HTTP 401 o 403:** tu sesión fue rechazada; detén el proceso y vuelve a iniciar sesión.
-- **HTTP 429:** Instagram aplicó un límite temporal; no repitas inmediatamente el escaneo.
-- **Estructura no reconocida:** Instagram probablemente cambió su respuesta interna.
-
-Consulta [Solución de problemas](docs/TROUBLESHOOTING_ES.md) y las [Preguntas frecuentes](docs/FAQ_ES.md).
-
-## Estructura del proyecto
-
-```text
-.
-├── index.html                         # Página pública de GitHub Pages
-├── src/
-│   └── instagram-no-followback-readonly.js
-├── docs/
-│   ├── USAGE_ES.md
-│   ├── USAGE_EN.md
-│   ├── FAQ_ES.md
-│   ├── FAQ_EN.md
-│   ├── TROUBLESHOOTING_ES.md
-│   ├── TROUBLESHOOTING_EN.md
-│   ├── PRIVACY.md
-│   └── ARCHITECTURE.md
-├── SECURITY.md
-├── SUPPORT.md
-└── LICENSE
-```
+Consulta [PRIVACY.md](docs/PRIVACY.md) y [SECURITY.md](SECURITY.md).
 
 ## Desarrollo
 
-No hay dependencias de ejecución.
+La versión pegable se genera desde módulos auditables:
 
-```bash
-npm run check
+```text
+lib/core.js
+lib/instagram-adapter.js
+lib/app.js
+        ↓ npm run build
+src/instagram-no-followback-readonly.js
 ```
 
-Comprobación directa:
+Validación local:
 
 ```bash
-node --check src/instagram-no-followback-readonly.js
+npm run validate
 ```
 
-## Contribuciones
+La integración continua confirma que el bundle está actualizado, la sintaxis es válida, las pruebas pasan y no existen solicitudes de modificación de cuenta.
 
-Las contribuciones son bienvenidas siempre que mantengan el proyecto:
+## Limitaciones
 
-- De solo lectura.
-- Sin seguimiento o unfollow automático.
-- Sin recopilación de credenciales.
-- Sin telemetría ni trackers.
-- Sin código remoto oculto o minimizado.
+- El endpoint no es una API pública ni estable.
+- Instagram puede modificar nombres de campos, rutas o límites.
+- Una relación puede cambiar después de terminar el escaneo.
+- Las cuentas desactivadas, renombradas o pendientes pueden producir diferencias.
+- Una extensión puede mostrar errores `ERR_BLOCKED_BY_CLIENT` pertenecientes a Instagram; el escáner informa sus propios errores dentro del panel.
 
-Lee [CONTRIBUTING.md](CONTRIBUTING.md) y [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+## Proyecto independiente
 
-## Créditos
-
-Proyecto inspirado conceptualmente por [`davidarroyo1234/InstagramUnfollowers`](https://github.com/davidarroyo1234/InstagramUnfollowers), pero reescrito con un alcance diferente: solo lectura, manejo defensivo de errores y ausencia total de automatización de unfollow.
+No está afiliado, autorizado ni respaldado por Instagram o Meta. Consulta [NOTICE.md](NOTICE.md).
 
 ## Licencia
 
-Licencia [MIT](LICENSE).
-
----
-
-## English
-
-**Find Instagram accounts you follow that do not follow you back, without sharing your password or automating unfollows.**
-
-Read the [English usage guide](docs/USAGE_EN.md), [FAQ](docs/FAQ_EN.md), and [troubleshooting guide](docs/TROUBLESHOOTING_EN.md).
+[MIT](LICENSE)

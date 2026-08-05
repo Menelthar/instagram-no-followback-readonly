@@ -1,125 +1,52 @@
-# Guía de uso en español
+# Guía de uso — versión 1.1.0
 
-## Resumen
+## Ejecutar
 
-Esta herramienta revisa las cuentas que sigues en Instagram y clasifica la relación que Instagram devuelve para cada una. Se ejecuta dentro de tu navegador y no realiza cambios en tu cuenta.
+1. Inicia sesión en `https://www.instagram.com/` desde un navegador de escritorio.
+2. Abre la página pública del proyecto.
+3. Revisa el código y pulsa **Copiar script**.
+4. Abre la consola (`Ctrl + Shift + J` en Windows/Linux; `⌘ + ⌥ + J` en macOS).
+5. Pega el script y presiona `Enter`.
+6. Pulsa **Iniciar escaneo**.
 
-## Requisitos
+## Ajustes recomendados
 
-- Computadora con Chrome, Edge o Firefox.
-- Sesión iniciada en `https://www.instagram.com/`.
-- Permiso para abrir las herramientas de desarrollador del navegador.
-- Tiempo suficiente para que el escaneo termine sin repetirlo varias veces.
-
-No necesitas instalar extensiones, Node.js ni aplicaciones móviles.
-
-## Antes de ejecutar
-
-1. Cierra pestañas duplicadas de Instagram.
-2. Recarga la pestaña principal.
-3. Confirma que puedes abrir tu perfil normalmente.
-4. No uses simultáneamente otras herramientas que automaticen acciones en Instagram.
-5. Lee el código antes de pegarlo.
-
-## Ejecución paso a paso
-
-1. Abre `https://www.instagram.com/` e inicia sesión.
-2. Abre la página del proyecto:
-   `https://menelthar.github.io/instagram-no-followback-readonly/`
-3. Pulsa **Copiar script**.
-4. Regresa a la pestaña de Instagram.
-5. Abre la consola:
-   - Chrome/Edge, Windows: `Ctrl + Shift + J`
-   - Firefox, Windows: `Ctrl + Shift + K`
-   - Chrome, macOS: `⌘ + ⌥ + J`
-6. Pega el código completo.
-7. Presiona `Enter`.
-8. Se abrirá una interfaz sobre Instagram.
-9. Mantén los tiempos predeterminados y pulsa **Iniciar escaneo**.
-
-## Protección contra pegar código
-
-Algunos navegadores muestran una advertencia para evitar que una persona te engañe y te haga pegar código peligroso.
-
-Solo continúa cuando:
-
-- Abriste el código desde este repositorio.
-- Revisaste que no solicite contraseñas o cookies.
-- Confirmaste que las solicitudes se dirigen a Instagram.
-- Entiendes que el proyecto no es oficial.
-
-Nunca copies cookies, tokens, cabeceras o contraseñas en un issue público.
-
-## Controles del escáner
-
-- **Iniciar escaneo:** borra el resultado anterior y comienza desde la primera página.
-- **Pausar:** detiene temporalmente nuevas consultas.
-- **Reanudar:** continúa desde el cursor actual.
-- **Detener:** cancela la consulta activa y conserva lo ya procesado.
-- **Cerrar:** elimina la interfaz de la página.
-
-## Ajustes
-
-Los valores predeterminados priorizan estabilidad.
-
-### Espera mínima y máxima
-
-Pausa aleatoria entre páginas. No conviene reducirla agresivamente.
-
-### Pausa larga
-
-Descanso adicional después de varias páginas.
-
-### Reintentos máximos
-
-Número limitado de intentos ante fallos temporales. Los errores críticos no se reintentan.
-
-### Filas por página
-
-Solo cambia cuántos resultados muestra la tabla local. No cambia la velocidad del escaneo.
-
-## Interpretación
-
-### No te siguen
-
-Instagram devolvió `follows_viewer === false`.
-
-### Mutuos
-
-Instagram devolvió `follows_viewer === true`.
-
-### Inciertos
-
-Instagram no devolvió un valor booleano confiable. No asumas que estas cuentas no te siguen.
-
-### Todos
-
-Todas las cuentas obtenidas durante el escaneo.
-
-## Exportación
-
-- **Copiar lista visible:** copia los usuarios de la pestaña y filtro actuales.
-- **CSV visible:** descarga la vista actual.
-- **JSON completo:** conserva todos los usuarios, clasificación y registro técnico.
-
-Los archivos exportados pueden contener nombres de usuario. Guárdalos de forma privada.
-
-## Verificación recomendada
-
-Antes de dejar de seguir manualmente a una persona:
-
-1. Abre su perfil desde la tabla.
-2. Comprueba la relación directamente.
-3. Verifica al menos 10–20 resultados aleatorios.
-4. Revisa especialmente las cuentas privadas, renombradas o con solicitudes pendientes.
-5. No realices grandes cantidades de acciones en poco tiempo.
+Conserva los valores predeterminados la primera vez. El timeout de 20 segundos evita peticiones colgadas. No reduzcas agresivamente las pausas.
 
 ## Al terminar
 
-Pulsa **Cerrar** o recarga Instagram. Los resultados en memoria desaparecerán, salvo lo que hayas exportado.
+Revisa el panel de integridad:
 
-Consulta también:
+- **Completa:** no se detectaron diferencias.
+- **Revisar:** hubo duplicados, inválidos, inciertos, cambio de contador o diferencia entre esperado y único.
 
-- [Preguntas frecuentes](FAQ_ES.md)
-- [Solución de problemas](TROUBLESHOOTING_ES.md)
-- [Privacidad](PRIVACY.md)
+Ejemplo:
+
+```text
+Esperado: 693
+Recibidos: 693
+Únicos: 692
+Duplicados: 1
+Inválidos: 0
+Diferencia: 1
+```
+
+Eso explica la diferencia sin asumir que toda la lista está mal.
+
+## Exportación
+
+Por privacidad, CSV y JSON no incluyen IDs internos ni URLs de foto. Puedes habilitarlos manualmente antes de exportar.
+
+El botón **Copiar diagnóstico** crea un informe seguro para reportar problemas. No incluye nombres de usuario ni IDs.
+
+## Errores de la consola
+
+Mensajes `ERR_BLOCKED_BY_CLIENT` en solicitudes internas de Instagram suelen venir de extensiones de bloqueo. Los errores del escáner aparecen dentro de su propio registro con códigos como:
+
+- `SESSION_REJECTED`
+- `RATE_LIMITED`
+- `REQUEST_TIMEOUT`
+- `UNSUPPORTED_RESPONSE`
+- `AMBIGUOUS_RESPONSE`
+- `REPEATED_CURSOR`
+- `COUNT_MISMATCH`

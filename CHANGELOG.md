@@ -1,26 +1,29 @@
 # Changelog
 
-All notable changes to this project are documented here.
+## [1.1.0] - 2026-08-05
 
-The project follows semantic versioning.
+### Added
 
-## [Unreleased]
+- Strict response-path validation with ambiguity rejection.
+- Integrity statistics for expected, received, unique, duplicate, invalid and uncertain records.
+- `completed_with_warnings` and `incomplete` states.
+- Per-request timeout with abort support.
+- Explicit HTTP retry/fatal policy and machine-readable error codes.
+- Interruptible retry delays.
+- Safe, username-free diagnostic export.
+- CSV spreadsheet-formula protection.
+- Optional internal-ID and profile-picture exports, disabled by default.
+- Spanish and English user interface.
+- Keyboard focus trap and `Escape` close support.
+- Modular source layout and deterministic bundle generation.
+- Automated tests for parsing, classification, cursors, HTTP policy, integrity and CSV handling.
 
-### Improved
+### Changed
 
-- Rewrote the README for non-technical users.
-- Redesigned the GitHub Pages landing page.
-- Added clear “what it does” and “what it does not do” sections.
-- Expanded Spanish and English usage guides.
-- Added Spanish and English FAQ documents.
-- Added Spanish and English troubleshooting guides.
-- Added support and code-of-conduct documentation.
-- Added clearer privacy, safety, and manual-verification guidance.
-- Added `.nojekyll` for predictable GitHub Pages publishing.
-
-### Removed
-
-- Removed the temporary repository-upload guide from the public project.
+- The scanner no longer silently selects the first GraphQL-like connection it finds.
+- Completion now reports warnings when counts do not reconcile.
+- Export files omit internal IDs and profile-picture URLs unless explicitly enabled.
+- GitHub Actions now builds the bundle and runs the test suite.
 
 ## [1.0.0] - 2026-08-05
 
@@ -28,15 +31,6 @@ The project follows semantic versioning.
 
 - Initial public read-only scanner.
 - Pagination and deduplication by Instagram user ID.
-- `follows_viewer` relationship classification.
-- Separate non-follower, mutual, uncertain, and all views.
-- Pause, resume, and stop controls.
-- Finite retries and progressive retry delays.
-- Fatal handling for HTTP 401, 403, and 429.
-- Repeated and missing cursor protection.
-- CSV and JSON exports.
-- Search and local table pagination.
-- Shadow DOM interface.
-- Spanish and English usage documentation.
-- Static landing page for GitHub Pages.
-- GitHub Actions syntax validation.
+- Relationship classification using `follows_viewer`.
+- Pause, resume, stop, search, CSV and JSON exports.
+- Fatal handling for HTTP 401, 403 and 429.
