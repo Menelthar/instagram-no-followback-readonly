@@ -1,37 +1,66 @@
-# Usage guide
+# English usage guide
 
-## Before you start
+## Overview
 
-This script runs inside an authenticated `www.instagram.com` browser session. Never type your password into the script or share account cookies or tokens.
+This tool reviews the accounts you follow on Instagram and classifies the relationship value returned by Instagram for each account. It runs inside your browser and does not modify your account.
 
-The tool is read-only:
+## Requirements
 
-- It only performs `GET` requests.
-- It contains no unfollow action.
-- It sends no result data to external services.
-- It stops on critical errors and rate limits.
+- Desktop Chrome, Edge, or Firefox.
+- An authenticated session at `https://www.instagram.com/`.
+- Access to the browser developer console.
+- Enough time to let the scan finish without repeatedly restarting it.
+
+No browser extension, Node.js installation, or mobile application is required.
 
 ## Run the scanner
 
-1. Open `https://www.instagram.com/`.
-2. Sign in normally.
-3. Open the browser developer console.
-4. Open `src/instagram-no-followback-readonly.js` from this repository.
-5. Review and copy the complete source.
-6. Paste it into the console and press `Enter`.
+1. Open `https://www.instagram.com/` and sign in.
+2. Open:
+   `https://menelthar.github.io/instagram-no-followback-readonly/`
+3. Click **Copiar script**.
+4. Return to the Instagram tab.
+5. Open the developer console:
+   - Windows/Linux: `Ctrl + Shift + J`
+   - macOS: `⌘ + ⌥ + J`
+6. Paste the complete source and press `Enter`.
 7. Click **Iniciar escaneo**.
+
+Keep the default timing settings for the first run.
 
 ## Result categories
 
-- **Non-followers:** `follows_viewer === false`
-- **Mutuals:** `follows_viewer === true`
-- **Uncertain:** the relationship field is missing or is not boolean
-- **All:** every account processed during the scan
+- **No te sigue / Non-follower:** `follows_viewer === false`
+- **Mutuo / Mutual:** `follows_viewer === true`
+- **Incierto / Uncertain:** the field is missing or is not boolean
+- **Todos / All:** every account processed in the current scan
+
+Uncertain entries must not automatically be treated as non-followers.
+
+## Scanner controls
+
+- Start a new scan.
+- Pause and resume.
+- Stop while keeping processed data.
+- Search and paginate local results.
+- Export the current view to CSV.
+- Export the complete scan and diagnostic log to JSON.
 
 ## Safety recommendations
 
+- Review the source before execution.
+- Never share passwords, cookies, or tokens.
 - Do not aggressively reduce delays.
-- Stop if Instagram returns HTTP `429`.
+- Stop after HTTP `429`.
 - Manually verify a sample of results.
-- Never use a modified copy that asks for passwords, cookies, session tokens, or external uploads.
-- Treat internal Instagram endpoints as unstable and unsupported.
+- Avoid performing a large number of account actions after the scan.
+
+## Exports
+
+Exported files can contain usernames and relationship data. Store them privately and delete them when no longer needed.
+
+See also:
+
+- [FAQ](FAQ_EN.md)
+- [Troubleshooting](TROUBLESHOOTING_EN.md)
+- [Privacy](PRIVACY.md)
