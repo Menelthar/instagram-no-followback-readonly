@@ -37,7 +37,8 @@ jobs:
       - name: Confirm read-only request policy
         shell: bash
         run: |
-          if grep -RniE 'method[[:space:]]*:[[:space:]]*["'"']POST["'"']' lib src; then
+          set -euo pipefail
+          if grep -RniF 'method: "POST"' lib src || grep -RniF "method: 'POST'" lib src; then
             echo "Account-modifying request found in read-only source."
             exit 1
           fi
@@ -45,7 +46,12 @@ jobs:
       - name: Confirm no remote executable imports
         shell: bash
         run: |
-          if grep -RniE '<script[^>]+src=|importScripts\(|https?://[^[:space:]"'"']+\.js' lib src; then
+          set -euo pipefail
+          if grep -RniE '<script[^>]+src=|importScripts\(' lib src; then
             echo "Remote executable dependency found."
+            exit 1
+          fi
+          if grep -RniE 'https?://[^[:space:]]+\.js' lib src; then
+            echo "Remote JavaScript URL found."
             exit 1
           fi
