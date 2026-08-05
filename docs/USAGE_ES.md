@@ -1,95 +1,125 @@
-# Guía de uso
+# Guía de uso en español
 
-## Antes de comenzar
+## Resumen
 
-Este script se ejecuta dentro de una sesión iniciada en `www.instagram.com`. No escribas tu contraseña dentro del script ni la compartas con nadie.
+Esta herramienta revisa las cuentas que sigues en Instagram y clasifica la relación que Instagram devuelve para cada una. Se ejecuta dentro de tu navegador y no realiza cambios en tu cuenta.
 
-La herramienta es de solo lectura:
+## Requisitos
 
-- Realiza solicitudes `GET`.
-- No contiene acciones de *unfollow*.
-- No envía resultados a servicios externos.
-- Se detiene ante límites o errores críticos.
+- Computadora con Chrome, Edge o Firefox.
+- Sesión iniciada en `https://www.instagram.com/`.
+- Permiso para abrir las herramientas de desarrollador del navegador.
+- Tiempo suficiente para que el escaneo termine sin repetirlo varias veces.
 
-## Ejecución
+No necesitas instalar extensiones, Node.js ni aplicaciones móviles.
 
-1. Abre `https://www.instagram.com/`.
-2. Inicia sesión normalmente.
-3. Abre la consola del navegador:
-   - Chrome/Edge en Windows: `Ctrl + Shift + J`
-   - Firefox en Windows: `Ctrl + Shift + K`
-   - Chrome en macOS: `⌘ + ⌥ + J`
-4. Abre el archivo `src/instagram-no-followback-readonly.js` desde este repositorio.
-5. Revisa el código y copia su contenido completo.
-6. Pégalo en la consola.
+## Antes de ejecutar
+
+1. Cierra pestañas duplicadas de Instagram.
+2. Recarga la pestaña principal.
+3. Confirma que puedes abrir tu perfil normalmente.
+4. No uses simultáneamente otras herramientas que automaticen acciones en Instagram.
+5. Lee el código antes de pegarlo.
+
+## Ejecución paso a paso
+
+1. Abre `https://www.instagram.com/` e inicia sesión.
+2. Abre la página del proyecto:
+   `https://menelthar.github.io/instagram-no-followback-readonly/`
+3. Pulsa **Copiar script**.
+4. Regresa a la pestaña de Instagram.
+5. Abre la consola:
+   - Chrome/Edge, Windows: `Ctrl + Shift + J`
+   - Firefox, Windows: `Ctrl + Shift + K`
+   - Chrome, macOS: `⌘ + ⌥ + J`
+6. Pega el código completo.
 7. Presiona `Enter`.
-8. Pulsa **Iniciar escaneo**.
+8. Se abrirá una interfaz sobre Instagram.
+9. Mantén los tiempos predeterminados y pulsa **Iniciar escaneo**.
 
-## Advertencia de autoprotección de la consola
+## Protección contra pegar código
 
-Algunos navegadores impiden pegar código en la consola para protegerte contra engaños. Sigue únicamente las instrucciones mostradas por tu propio navegador y solo después de haber revisado el código.
+Algunos navegadores muestran una advertencia para evitar que una persona te engañe y te haga pegar código peligroso.
 
-Nunca ejecutes una versión que:
+Solo continúa cuando:
 
-- Solicite tu contraseña.
-- Pida copiar cookies o tokens.
-- Envíe datos a dominios distintos de Instagram.
-- Oculte o minimice código de procedencia desconocida.
-- Prometa evitar por completo los límites de Instagram.
+- Abriste el código desde este repositorio.
+- Revisaste que no solicite contraseñas o cookies.
+- Confirmaste que las solicitudes se dirigen a Instagram.
+- Entiendes que el proyecto no es oficial.
+
+Nunca copies cookies, tokens, cabeceras o contraseñas en un issue público.
+
+## Controles del escáner
+
+- **Iniciar escaneo:** borra el resultado anterior y comienza desde la primera página.
+- **Pausar:** detiene temporalmente nuevas consultas.
+- **Reanudar:** continúa desde el cursor actual.
+- **Detener:** cancela la consulta activa y conserva lo ya procesado.
+- **Cerrar:** elimina la interfaz de la página.
 
 ## Ajustes
 
-Los valores predeterminados priorizan estabilidad, no velocidad.
+Los valores predeterminados priorizan estabilidad.
 
-- **Espera mínima/máxima:** pausa entre páginas.
-- **Pausa larga cada N páginas:** descanso adicional periódico.
-- **Reintentos máximos:** evita ciclos infinitos ante fallos temporales.
-- **Filas por página:** solo afecta la tabla local.
+### Espera mínima y máxima
 
-No reduzcas agresivamente las pausas. Una respuesta HTTP `429` significa que debes detenerte y no repetir inmediatamente el escaneo.
+Pausa aleatoria entre páginas. No conviene reducirla agresivamente.
 
-## Resultados
+### Pausa larga
+
+Descanso adicional después de varias páginas.
+
+### Reintentos máximos
+
+Número limitado de intentos ante fallos temporales. Los errores críticos no se reintentan.
+
+### Filas por página
+
+Solo cambia cuántos resultados muestra la tabla local. No cambia la velocidad del escaneo.
+
+## Interpretación
 
 ### No te siguen
 
-Cuentas con `follows_viewer === false`.
+Instagram devolvió `follows_viewer === false`.
 
 ### Mutuos
 
-Cuentas con `follows_viewer === true`.
+Instagram devolvió `follows_viewer === true`.
 
 ### Inciertos
 
-Registros sin un valor booleano confiable en `follows_viewer`. No deben interpretarse automáticamente como no seguidores.
+Instagram no devolvió un valor booleano confiable. No asumas que estas cuentas no te siguen.
 
 ### Todos
 
-Lista completa obtenida durante el escaneo.
+Todas las cuentas obtenidas durante el escaneo.
 
 ## Exportación
 
-- **Copiar lista visible:** copia los usuarios filtrados.
-- **CSV visible:** exporta la pestaña y búsqueda actuales.
-- **JSON completo:** incluye todos los usuarios, clasificación, metadatos básicos y registro del escaneo.
+- **Copiar lista visible:** copia los usuarios de la pestaña y filtro actuales.
+- **CSV visible:** descarga la vista actual.
+- **JSON completo:** conserva todos los usuarios, clasificación y registro técnico.
+
+Los archivos exportados pueden contener nombres de usuario. Guárdalos de forma privada.
 
 ## Verificación recomendada
 
-Antes de dejar de seguir manualmente a alguien:
+Antes de dejar de seguir manualmente a una persona:
 
-1. Abre su perfil desde el enlace del resultado.
-2. Comprueba la relación directamente en Instagram.
-3. Repite la comprobación con una muestra de al menos 10–20 cuentas.
-4. Conserva el JSON si necesitas diagnosticar discrepancias.
+1. Abre su perfil desde la tabla.
+2. Comprueba la relación directamente.
+3. Verifica al menos 10–20 resultados aleatorios.
+4. Revisa especialmente las cuentas privadas, renombradas o con solicitudes pendientes.
+5. No realices grandes cantidades de acciones en poco tiempo.
 
-## Detención por errores
+## Al terminar
 
-La herramienta se detiene ante:
+Pulsa **Cerrar** o recarga Instagram. Los resultados en memoria desaparecerán, salvo lo que hayas exportado.
 
-- `401`: sesión no autorizada.
-- `403`: acceso rechazado.
-- `429`: límite temporal.
-- Estructura de respuesta desconocida.
-- Cursor repetido.
-- Falta de cursor cuando Instagram indica otra página.
+Consulta también:
 
-Esto evita continuar con resultados potencialmente incompletos o inventados.
+- [Preguntas frecuentes](FAQ_ES.md)
+- [Solución de problemas](TROUBLESHOOTING_ES.md)
+- [Privacidad](PRIVACY.md)
