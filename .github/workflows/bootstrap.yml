@@ -30,12 +30,16 @@ jobs:
           mkdir -p /tmp/prepared-repository
           unzip -q /tmp/repository.zip -d /tmp/prepared-repository
 
-      - name: Publish complete repository
+      - name: Publish all non-workflow files
         shell: bash
         run: |
           set -euo pipefail
+          cp .github/workflows/bootstrap.yml /tmp/bootstrap.yml
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a /tmp/prepared-repository/. ./
+          rm -f .github/workflows/validate.yml
+          mkdir -p .github/workflows
+          cp /tmp/bootstrap.yml .github/workflows/bootstrap.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
