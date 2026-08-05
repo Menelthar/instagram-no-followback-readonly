@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Escáner de Instagram de solo lectura para identificar cuentas que no te siguen de vuelta.">
+  <title>Instagram No-Follow-Back — Read Only</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg:#070b14;
+      --panel:#111827;
+      --panel2:#0f172a;
+      --line:#334155;
+      --text:#f8fafc;
+      --muted:#94a3b8;
+      --accent:#7c3aed;
+      --ok:#22c55e;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at top,#1e1b4b,var(--bg) 42%);color:var(--text);min-height:100vh}
+    main{width:min(980px,calc(100% - 28px));margin:0 auto;padding:64px 0}
+    .hero,.card{background:rgba(17,24,39,.94);border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.34)}
+    .hero{padding:34px}
+    h1{font-size:clamp(2rem,6vw,4rem);line-height:1.02;margin:0 0 16px}
+    h2{margin-top:0}
+    p,li{line-height:1.62}
+    .muted{color:var(--muted)}
+    .badge{display:inline-block;background:#312e81;border:1px solid #4c1d95;border-radius:999px;padding:6px 10px;font-weight:700;font-size:.8rem;margin-bottom:18px}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+    button,a.button{border:1px solid var(--line);background:#1e293b;color:var(--text);border-radius:12px;padding:12px 15px;font-weight:800;cursor:pointer;text-decoration:none}
+    button.primary{background:var(--accent);border-color:var(--accent)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+    .card{padding:22px}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    pre{background:#020617;border:1px solid var(--line);padding:14px;border-radius:12px;overflow:auto;max-height:280px;white-space:pre-wrap}
+    .status{min-height:24px;color:#86efac;margin-top:10px}
+    .warning{border-left:4px solid #f59e0b;padding:12px 14px;background:#451a0333;color:#fde68a;border-radius:8px}
+    footer{color:var(--muted);text-align:center;margin-top:26px;font-size:.9rem}
+    @media(max-width:700px){.grid{grid-template-columns:1fr}.hero{padding:24px}}
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <span class="badge">SOLO LECTURA · OPEN SOURCE</span>
+    <h1>Instagram<br>No-Follow-Back</h1>
+    <p class="muted">
+      Identifica las cuentas que sigues y no te siguen de vuelta, sin solicitar contraseñas,
+      sin subir resultados y sin automatizar unfollows.
+    </p>
+    <div class="warning">
+      Utiliza un endpoint interno y no oficial de Instagram. Revisa el código, úsalo con moderación
+      y comprueba manualmente una muestra de los resultados.
+    </div>
+    <div class="actions">
+      <button id="copy" class="primary">Copiar script</button>
+      <a class="button" href="./src/instagram-no-followback-readonly.js" download>Descargar .js</a>
+      <a class="button" href="https://github.com/Menelthar/instagram-no-followback-readonly">Ver código en GitHub</a>
+    </div>
+    <div id="status" class="status" aria-live="polite"></div>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <h2>Cómo usarlo</h2>
+      <ol>
+        <li>Inicia sesión en Instagram Web.</li>
+        <li>Abre la consola del navegador.</li>
+        <li>Revisa y copia el script.</li>
+        <li>Pégalo y presiona Enter.</li>
+        <li>Pulsa “Iniciar escaneo”.</li>
+      </ol>
+    </article>
+    <article class="card">
+      <h2>Principios de seguridad</h2>
+      <ul>
+        <li>Solicitudes de lectura.</li>
+        <li>Sin contraseñas ni tokens exportados.</li>
+        <li>Sin trackers ni dependencias remotas.</li>
+        <li>Sin unfollows automáticos.</li>
+        <li>Detención ante 401, 403 y 429.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:18px">
+    <h2>Verificación</h2>
+    <p class="muted">SHA-256 de la versión 1.0.0:</p>
+    <pre>8ffc1e6ea599545c080867f39375a561d258839e0f04c5a96618990630011a22</pre>
+    <p class="muted">Vista previa del inicio del archivo:</p>
+    <pre id="preview">Cargando…</pre>
+  </section>
+
+  <footer>
+    Proyecto independiente y no afiliado con Instagram o Meta.
+  </footer>
+</main>
+<script>
+  const sourceUrl = "./src/instagram-no-followback-readonly.js";
+  const copyButton = document.getElementById("copy");
+  const status = document.getElementById("status");
+  const preview = document.getElementById("preview");
+  let source = "";
+
+  fetch(sourceUrl)
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.text();
+    })
+    .then(text => {
+      source = text;
+      preview.textContent = text.split("\n").slice(0, 24).join("\n");
+    })
+    .catch(error => {
+      preview.textContent = `No se pudo cargar el archivo: ${error.message}`;
+      copyButton.disabled = true;
+    });
+
+  copyButton.addEventListener("click", async () => {
+    if (!source) return;
+    try {
+      await navigator.clipboard.writeText(source);
+      status.textContent = "Script copiado. Revísalo antes de ejecutarlo.";
+    } catch (error) {
+      status.textContent = "El navegador no permitió copiar automáticamente. Usa el botón Descargar .js.";
+    }
+  });
+</script>
+</body>
+</html>

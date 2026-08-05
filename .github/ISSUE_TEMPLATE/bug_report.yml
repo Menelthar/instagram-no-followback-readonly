@@ -1,0 +1,43 @@
+name: Bug report
+description: Report incorrect behavior or compatibility problems
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include passwords, cookies, tokens, exported account data or private usernames.
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 150
+    validations:
+      required: true
+  - type: input
+    id: script-version
+    attributes:
+      label: Script version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Sanitized diagnostic log
+      description: Remove usernames, IDs, cookies and tokens.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: I removed private account information.
+          required: true
+        - label: I verified that I used the unmodified source from this repository.
+          required: true

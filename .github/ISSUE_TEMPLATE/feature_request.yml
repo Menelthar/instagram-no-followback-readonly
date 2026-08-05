@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest a read-only, privacy-preserving improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Automated follow/unfollow actions and platform-safeguard circumvention are out of scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed read-only solution
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope confirmation
+      options:
+        - label: This request does not require automated account modification.
+          required: true
+        - label: This request does not require collecting credentials or sending results externally.
+          required: true
