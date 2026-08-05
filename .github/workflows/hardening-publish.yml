@@ -1,0 +1,48 @@
+name: Publish v1.1.0 hardening
+
+on:
+  push:
+    branches: ["v1.1.0-hardening"]
+    paths:
+      - ".github/workflows/hardening-publish.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Rebuild and verify prepared package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .hardening/part* > /tmp/v110.zip.b64
+          test "$(wc -c < /tmp/v110.zip.b64)" -eq 58048
+          base64 --decode /tmp/v110.zip.b64 > /tmp/v110.zip
+          echo "96b472232033ce3183374fd2026ac186c041b22801e8055617131575eba12a3f  /tmp/v110.zip" | sha256sum --check --strict
+          unzip -t /tmp/v110.zip
+          rm -rf /tmp/v110
+          mkdir -p /tmp/v110
+          unzip -q /tmp/v110.zip -d /tmp/v110
+
+      - name: Validate prepared release
+        shell: bash
+        working-directory: /tmp/v110
+        run: npm run validate
+
+      - name: Publish hardened implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a /tmp/v110/. ./
+          rm -rf .hardening
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Implement v1.1.0 hardening"
+          git push
